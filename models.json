@@ -1,0 +1,66 @@
+{
+  "providers": {
+    "openrouter": {
+      "baseUrl": "https://openrouter.ai/api/v1",
+      "apiKey": "env:OPENROUTER_API_KEY",
+      "models": [
+        {
+          "id": "google/gemini-3.7-flash",
+          "name": "Google: Gemini 3.7 Flash",
+          "api": "openai",
+          "contextWindow": 1048576,
+          "maxTokens": 65536,
+          "reasoning": true,
+          "cost": {
+            "in": 0.375,
+            "out": 1.875,
+            "cacheRead": 0.0375,
+            "cacheWrite": 0.02083
+          }
+        },
+        {
+          "id": "qwen/qwen3.8-27b",
+          "name": "Qwen: Qwen3.8 27B",
+          "api": "openai",
+          "contextWindow": 262144,
+          "maxTokens": 131072,
+          "reasoning": true,
+          "cost": {
+            "in": 0.45,
+            "out": 3.2,
+            "cacheRead": 0.05,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "deepseek/deepseek-v4-pro-0813",
+          "name": "DeepSeek: DeepSeek V4 Pro 0813",
+          "api": "openai",
+          "contextWindow": 1048576,
+          "maxTokens": 384000,
+          "reasoning": true,
+          "cost": {
+            "in": 0.66,
+            "out": 1.98,
+            "cacheRead": 0.022,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "anthropic/claude-opus-5",
+          "name": "Claude Opus 5",
+          "api": "openai",
+          "contextWindow": 1000000,
+          "maxTokens": 128000,
+          "reasoning": true,
+          "cost": {
+            "in": 5.0,
+            "out": 25.0,
+            "cacheRead": 0.5,
+            "cacheWrite": 6.25
+          }
+        }
+      ]
+    }
+  }
+}

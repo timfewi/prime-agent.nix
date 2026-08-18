@@ -57,7 +57,7 @@ The package includes Node.js, Git, SSH, ripgrep, fd, and uv in its runtime path.
     # extensions = [ ./extensions/my-extension.ts ];
     # themes = [ ./themes/custom.json ];
     # promptTemplates = [ ./prompts ];
-    # models = ./models.json;
+    # models = inputs.prime-agent + "/models.json";
     # settings.defaultProvider = "openai";
     # settings.defaultModel = "gpt-5";
     # jail.enable = true;
@@ -151,6 +151,59 @@ programs.prime-agent.jail.permissions = combinators: with combinators; [
 programs.prime-agent.package =
   inputs.prime-agent.packages.${pkgs.system}.prime-agent-bun;
 ```
+
+## OpenRouter coding models
+
+This fork ships a curated set of extra coding models in `models.json`, which
+Prime Agent reads from `$PRIME_AGENT_CODING_AGENT_DIR/models.json` (default
+`~/.prime/agent/models.json`). All four models are served through OpenRouter
+so a single `OPENROUTER_API_KEY` covers them.
+
+Enable it by pointing `programs.prime-agent.models` at the repository file and
+select one of the models:
+
+```nix
+{ inputs, config, ... }:
+{
+  imports = [ inputs.prime-agent.nixosModules.default ];
+
+  programs.prime-agent = {
+    enable = true;
+    models = inputs.prime-agent + "/models.json";
+    settings = {
+      defaultProvider = "openrouter";
+      defaultModel = "google/gemini-3.7-flash";
+    };
+    environment.OPENROUTER_API_KEY.file =
+      config.sops.secrets.openrouter-api-key.path;
+  };
+}
+```
+
+For Home Manager the same `programs.prime-agent.models` option works; keep the
+model and provider settings and export `OPENROUTER_API_KEY`, for example:
+
+```nix
+environment.OPENROUTER_API_KEY = {
+  file = config.sops.secrets.openrouter-api-key.path;
+};
+```
+
+The four included models are:
+
+| Model ID | Context | Max tokens | Reasoning |
+| --- | --- | --- | --- |
+| `google/gemini-3.7-flash` | 1,048,576 | 65,536 | yes |
+| `qwen/qwen3.8-27b` | 262,144 | 131,072 | yes |
+| `deepseek/deepseek-v4-pro-0813` | 1,048,576 | 384,000 | yes |
+| `anthropic/claude-opus-5` | 1,000,000 | 128,000 | yes |
+
+> [!WARNING]
+> The `models.json` file only references the API key as `env:OPENROUTER_API_KEY`.
+> Never hardcode a key in the file or in your Nix configuration. The actual
+> secret is read from the environment at runtime (e.g. via
+> `environment.OPENROUTER_API_KEY.file` for sops-nix secrets), never baked
+> into `models.json`.
 
 ## Options
 
